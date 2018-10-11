@@ -1,0 +1,33 @@
+---
+- hosts: cosmos-node-dev
+  become: yes
+  become_user: gaiad
+  environment:
+    GOPATH: "/home/gaiad/go"
+    GOBIN: "/home/gaiad/go/bin"
+    PATH: "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/gaiad/go/bin"
+  tasks:
+    - name: Install Cosmos SDK mkdir
+      file: path=~/go/src/github.com/cosmos state=directory owner=gaiad group=gaiad mode=0755
+    - name: Install Cosmos SDK checkout with github
+      git: repo=https://github.com/cosmos/cosmos-sdk dest=~/go/src/github.com/cosmos/cosmos-sdk
+      poll: 30
+      async: 600
+    - name: Install Cosmos SDK make get_tools
+      command: make get_tools chdir=~/go/src/github.com/cosmos/cosmos-sdk
+    - name: Install Cosmos SDK make get_vendor_deps
+      command: make get_vendor_deps chdir=~/go/src/github.com/cosmos/cosmos-sdk
+    - name: Install Cosmos SDK make install
+      command: make install chdir=~/go/src/github.com/cosmos/cosmos-sdk
+- hosts: cosmos-node-dev
+  become: yes
+  become_user: root
+  tasks:
+    - name: Gaiad add systemd
+      template: src=./systemd.gaiad.service dest=/etc/systemd/system/gaiad.service owner=root group=root mode=0644
+    - name: Enabled gaiad.service
+      systemd:
+        name: gaiad.service
+        state: restarted
+        daemon_reload: yes
+        enabled: yes

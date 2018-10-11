@@ -1,0 +1,4 @@
+[cosmos-node-dev]
+35.194.171.251 # cosmos-node-dev-001
+[cosmos-node-dev:vars]
+ansible_python_interpreter=/usr/bin/python3

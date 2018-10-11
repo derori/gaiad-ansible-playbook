@@ -1,0 +1,10 @@
+---
+- hosts: cosmos-node-dev
+  become: yes
+  become_user: gaiad
+  environment:
+    GOPATH: "/home/gaiad/go"
+    GOBIN: "/home/gaiad/go/bin"
+    PATH: "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/gaiad/go/bin"
+  tasks:
+    - name: Gaiad Init

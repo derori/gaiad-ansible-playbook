@@ -1,0 +1,31 @@
+---
+- hosts: cosmos-node-dev
+  become: yes
+  become_user: root
+  tasks:
+    - name: Install package golang-go
+      apt:
+        name: golang-go
+        state: present
+        update_cache: yes
+    - name: Install package go-dep
+      apt:
+        name: go-dep
+        state: present
+        update_cache: yes
+    - name: Useradd gaiad
+      user: name=gaiad state=present home=/home/gaiad shell=/bin/bash
+- hosts: cosmos-node-dev
+  become: yes
+  become_user: gaiad
+  tasks:
+    - name: mkdir ~/go/bin
+      file: path=~/go/bin state=directory owner=gaiad group=gaiad mode=0755
+    - name: Add golang enviroments with .profile.
+      lineinfile:
+        dest=~/.profile
+        line={{ item }}
+      with_items:
+        - 'export GOPATH=$HOME/go'
+        - 'export GOBIN=$GOPATH/bin'
+        - 'export PATH=$PATH:$GOBIN'

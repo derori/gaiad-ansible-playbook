@@ -1,0 +1,16 @@
+# /etc/systemd/system/gaiad.service
+[Unit]
+Description=Cosmos Gaia Node
+After=network.target
+
+[Service]
+Type=simple
+User=gaiad
+WorkingDirectory=/home/gaiad
+ExecStart=/home/gaiad/go/bin/gaiad start
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
